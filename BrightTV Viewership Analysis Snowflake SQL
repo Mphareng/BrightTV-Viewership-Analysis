@@ -1,0 +1,176 @@
+SELECT *
+FROM
+  "CASESTUDY2"."PUBLIC"."VIEWERSHIP2";
+
+SELECT *
+FROM 
+"CASESTUDY2".PUBLIC.USERPROFILES2;
+
+--Number of users
+select count (distinct userid) as number_of_users
+from viewership2;
+
+--Checking distinct channels
+SELECT DISTINCT (CHANNEL),
+FROM VIEWERSHIP2;
+
+--Checking Disting channels and their views
+
+SELECT DISTINCT (CHANNEL),
+       COUNT (UserId) as Number_of_times_watched
+FROM VIEWERSHIP2
+Group BY ALL
+Order by COUNT (UserId) DESC;
+
+--Analysing viewership by gender
+
+select GENDER,
+       count(v.userid)
+from userprofiles2 u
+Inner join viewership2 v
+on u.userid=v.userid
+GROUP By GENDER;
+
+
+--Analysing viewership by race
+
+select RACE,
+       count(v.userid)
+from userprofiles2 u
+Inner join viewership2 v
+on u.userid=v.userid
+GROUP By RACE;
+
+
+
+--Analysing viewership by gender and race
+
+select GENDER,
+       RACE,
+       count(v.userid)
+from userprofiles2 u
+Inner join viewership2 v
+on u.userid=v.userid
+GROUP By ALL;
+
+
+--Analysing viewership by province
+
+select PROVINCE,
+       count(v.userid)
+from userprofiles2 u
+Inner join viewership2 v
+on u.userid=v.userid
+GROUP By PROVINCE;
+
+--Analysing viewership per province by race 
+
+select PROVINCE,
+       RACE,
+       count(v.userid)
+from userprofiles2 u
+Inner join viewership2 v
+on u.userid=v.userid
+GROUP By ALL;
+
+
+
+--AGE CHECK
+select min(age)
+from USERPROFILES2;
+
+select max(age)
+from userprofiles2;
+
+select DISTINCT(age)
+from userprofiles2;
+
+--Time check
+select distinct(recordtime_sast)
+from viewership2;
+
+
+--Viewership by age class
+
+select count(u.userid),
+    CASE
+        when age between 1 and 12 then 'Children'
+        when age between 13 and 19 then 'Teenagers'
+        when age between 20 and 35 then 'Youth'
+        when age between 35 and 50 then 'Adults'
+        when age between 50 and 65 then 'Older adults'
+        ELSE 'Seniors'
+    END as Age_Bucket,
+
+    FROM viewership2 v
+inner join userprofiles2 u
+on v.userid=u.userid
+Group by Age_Bucket;
+
+--Age, recordtime buckets for users with both user profiles and viewership 
+
+--Viewership times
+
+Select count (u.userid),
+  CASE 
+        
+       when recordtime_sast between '00:00:00' and '06:00:00' then 'Early Morning'
+       when recordtime_sast between '06:00:00' and '12:00:00' then 'Morning'
+       when recordtime_sast between '12:00:00' and '17:00:00' then 'Afternoon'
+       when recordtime_sast between '17:00:00' and '21:00:00' then 'Evening'
+       when recordtime_sast between '21:00:00' and '23:59:59' then 'Night'
+    END  as Time_Bucket
+
+FROM viewership2 v
+inner join userprofiles2 u
+on v.userid=u.userid
+Group by Time_Bucket;
+
+--Joining tables
+
+select *,
+    CASE
+        when age between 0 and 12 then 'Children'
+        when age between 13 and 19 then 'Teenagers'
+        when age between 20 and 35 then 'Youth'
+        when age between 35 and 50 then 'Adults'
+        when age between 50 and 65 then 'Older adults'
+        ELSE 'Seniors'
+    END as Age_Bucket,
+
+    CASE 
+       when recordtime_sast between '00:00:00' and '06:00:00' then 'Early Morning'
+       when recordtime_sast between '06:00:00' and '12:00:00' then 'Morning'
+       when recordtime_sast between '12:00:00' and '17:00:00' then 'Afternoon'
+       when recordtime_sast between '17:00:00' and '21:00:00' then 'Evening'
+       when recordtime_sast between '21:00:00' and '23:59:59' then 'Night'
+    END  as Time_Bucket
+
+FROM viewership2 v
+inner join userprofiles2 u
+on v.userid=u.userid; 
+
+--Age, recordtime buckets of everything without altering the tables
+
+select *,
+    CASE
+        when age between 0 and 12 then 'Children'
+        when age between 13 and 19 then 'Teenagers'
+        when age between 20 and 35 then 'Youth'
+        when age between 35 and 50 then 'Adults'
+        when age between 50 and 65 then 'Older adults'
+        ELSE 'Seniors'
+    END as Age_Bucket,
+
+    CASE 
+       when recordtime_sast between '00:00:00' and '06:00:00' then 'Early Morning'
+       when recordtime_sast between '06:00:00' and '12:00:00' then 'Morning'
+       when recordtime_sast between '12:00:00' and '17:00:00' then 'Afternoon'
+       when recordtime_sast between '17:00:00' and '21:00:00' then 'Evening'
+       when recordtime_sast between '21:00:00' and '23:59:59' then 'Night'
+    END  as Time_Bucket
+
+FROM viewership2 v
+full outer join userprofiles2 u
+on v.userid=u.userid; 
+
